@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd"
+>
+<html lang="es">
+<head>
+<title>Probando el comportamiento draggable de jQueryUI</title>
+   <link type="text/css" href="https://desarrolloweb.com/articulos/ejemplos/jquery/ui/interactions/css/blitzer/jquery-ui-1.8.16.custom.css" rel="Stylesheet" id="linkestilo" />
+   <style type="text/css">
+   body{
+      font-family: sans-serif;
+   }
+   #salon{
+      width: 500px;
+      height: 300px;
+      border: 1px solid #ccc;
+      overflow: auto;
+      float: left;
+   }
+   .table{
+      position: relative;
+      top: 10px;
+      left: 20px;
+      width: 30px;
+      padding: 7px;
+      font-size: 10px;
+      font-weight: bold;
+      text-align: center;
+	  overflow: auto;
+   }
+   #posicion{
+      font-size: 12px;
+      margin-left: 520px;
+      line-height: 150%;
+   }
+   .ui-draggable{
+      background: #feb;
+   }
+   .ui-draggable-dragging{
+      background: #def;
+   }
+   </style>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+   <script type="text/javascript">
+	var dragFunction=function(event, ui){
+               $("#posx").text(ui.position.left);
+               $("#posy").text(ui.position.top);
+               
+               $("#offsetx").text(ui.offset.left);
+               $("#offsety").text(ui.offset.top);
+            };
+	var contTable=0;
+	var enableEditionTable=function(){$(".table").draggable({drag: dragFunction,  disabled: false}); $("#salon").droppable({ drop:dropTable})}
+	var inenableTableEdition=function(){$(".table").draggable("disable");}
+	
+	var addTableFunction=function(){
+			$("#salon").append("<div id=\"table"+ ++contTable +"\" class=\"ui-corner-all ui-state-highlight table\">"+ contTable +"</div>");
+			enableEditionTable()	
+	};
+	var isEnableEdition=true;
+	var changeEdition=function(){
+		if(!isEnableEdition){
+			isEnableEdition=true;
+			enableEditionTable()
+			$("#addTable").prop('disabled', false);
+			$("#changeEdition")[0].value="Deshabilitar Edición"
+			unbindTable();
+		}
+		else{
+			isEnableEdition=false;
+			$("#addTable").prop('disabled', true);
+			inenableTableEdition();
+			addEventClickTable();
+			$("#changeEdition")[0].value="Habilitar Edición"
+		}
+	}
+	var showDetailTable=(function(){ alert("Mostrar detalle de: "+this.id)})
+	var unbindTable=(function(){$(".table").unbind( "click" );})
+	var addEventClickTable=(function(){$(".table").click(showDetailTable);});
+	
+	dropTable=function( evento, ui ) { 
+		$("#posx").text(ui.position.left);
+		$("#posy").text(ui.position.top);
+
+		$("#offsetx").text(ui.offset.left);
+		$("#offsety").text(ui.offset.top);
+		alert("Guardar posicion en la base de datos del elemento: "+ui.draggable[0].id+" con X relativo: "+ui.position.left+" Y relativo: "+ui.position.top+" o bien con X absoluto: "+ui.offset.left+" Y absoluto: "+ui.offset.top);
+}
+	
+	$(document).ready(function(){
+		var countTable=0;
+		$("#addTable").click(addTableFunction)
+		$("#changeEdition").click(changeEdition)
+		changeEdition()
+	});
+//
+	  
+
+   </script>
+</head>
+<body>
+   <h1 class="ui-state-default ui-corner-all">Diseñador de mesas</h1>
+   <div id="salon">
+   </div>
+   <div id="posicion">
+      Coordenadas del elemento relativas al contenedor:
+      <br>
+      X: <span id="posx"></span>
+      <br>
+      Y: <span id="posy"></span>
+      <br>
+      <br>
+      Coordenadas del elemento absolutas a la página:
+      <br>
+      X: <span id="offsetx"></span>
+      <br>
+      Y: <span id="offsety"></span>
+   </div>
+   <input type="button" value="Añadir mesa" disabled="true" id="addTable"/>
+   <input type="button" value="Habilitar Edicion" id="changeEdition"/>
+</body>
+</html>
